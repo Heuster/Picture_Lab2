@@ -210,6 +210,7 @@ public class Picture extends SimplePicture
     int count = 0;
     Pixel[][] pixels = this.getPixels2D();
     
+    
     // loop through the rows
     for (int row = 27; row < 97; row++)
     {
@@ -226,27 +227,50 @@ public class Picture extends SimplePicture
   }
   
   public void mirrorArms(){
-    int mirrorPoint = 171;
+    int mirrorPoint = 170;
     Pixel leftPixel = null;
     Pixel rightPixel = null;
+    Pixel topPixel = null;
+    Pixel botPixel = null;
     int count = 0;
     Pixel[][] pixels = this.getPixels2D();
+    int height = pixels.length;
     
     // loop through the rows
-    for (int row = 158; row < 192; row++)
+    for (int row = 160; row < 192; row++)
     {
-      // loop from 13 to just before the mirror point
+    
       for (int col = 105; col < mirrorPoint; col++)
       {
-        leftPixel = pixels[row][col];      
-        rightPixel = pixels[row][mirrorPoint - col + mirrorPoint];
+        leftPixel = pixels[row][col];  
+        rightPixel = pixels[row+65][mirrorPoint - col + mirrorPoint + 73];
         rightPixel.setColor(leftPixel.getColor());
-        count = count += 1;
+        //Flip
+        topPixel = pixels[row][col];
+        botPixel = pixels[height - 1 - row][col];
+        botPixel = pixels[row + 65][col-7];
+        botPixel.setColor(topPixel.getColor());
+        
       }
     }
-    System.out.println("Loops executed: "+ count);
     }
   
+  public void mirrorSeagull(){
+     int mirrorPoint = 233;
+     Pixel leftPixel = null;
+     Pixel rightPixel = null;
+     Pixel[][] pixels = this.getPixels2D();
+     
+     for (int row = 231; row < 322; row++){
+         for (int col = 233; col < 343; col++){
+             leftPixel = pixels[row][col];  
+             rightPixel = pixels[row][mirrorPoint - col + mirrorPoint+240];
+             rightPixel.setColor(leftPixel.getColor());
+            }
+        }
+    }
+    
+    
   /** copy from the passed fromPic to the
     * specified startRow and startCol in the
     * current picture
@@ -277,7 +301,31 @@ public class Picture extends SimplePicture
       }
     }   
   }
-
+  
+  public void copy2(Picture fromPic, 
+                 int startRow, int startCol)
+  {
+    Pixel fromPixel = null;
+    Pixel toPixel = null;
+    Pixel[][] toPixels = this.getPixels2D();
+    Pixel[][] fromPixels = fromPic.getPixels2D();
+    for (int fromRow = 0, toRow = startRow; 
+         fromRow < fromPixels.length &&
+         toRow < toPixels.length; 
+         fromRow++, toRow++)
+    {
+      for (int fromCol = 0, toCol = startCol; 
+           fromCol < fromPixels[0].length &&
+           toCol < toPixels[0].length;  
+           fromCol++, toCol++)
+      {
+        fromPixel = fromPixels[fromRow][fromCol];
+        toPixel = toPixels[toRow][toCol];
+        toPixel.setColor(fromPixel.getColor());
+      }
+    }   
+  }
+  
   /** Method to create a collage of several pictures */
   public void createCollage()
   {
@@ -294,6 +342,36 @@ public class Picture extends SimplePicture
     this.mirrorVertical();
     this.write("collage.jpg");
   }
+  
+  public void myCollage(){
+      Picture car= new Picture("240sx.jpg");
+      this.copy2(car, 0, 0);
+      
+      Picture carNegate = new Picture("240sx.jpg");
+      carNegate.negate();
+      this.copy2(carNegate, 250, 150);
+      
+      Picture carGray = new Picture("240sx.jpg");
+      carGray.grayScale();
+      this.copy2(carGray, 10, 420);
+      
+      Picture carNoBlue = new Picture("240sx.jpg");
+      carNoBlue.zeroBlue();
+      this.copy2(carNoBlue, 250, 420);
+      
+      int mirrorPoint = 200;
+      Pixel rightPixel = null;
+      Pixel leftPixel = null;
+      Pixel [][] pixels = this.getPixels2D();
+      
+      for (int row = 0; row < 200; row++){
+         for (int col = 0; col < 100; col++){
+             rightPixel = pixels[row][col];
+             leftPixel = pixels[mirrorPoint - row + mirrorPoint][col];
+             leftPixel.setColor(rightPixel.getColor());
+            }
+        }
+    }
   
   
   /** Method to show large changes in color 
